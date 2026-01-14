@@ -1,0 +1,115 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "^build:version", "^@aurodesignsystem/build-tools#build:formkit-version"],
+      "outputs": [
+        "dist/**",
+        "demo/*.md",
+        "demo/*.min.js",
+        "docTemplates/**",
+        "docs/api.md",
+        "src/styles/*.css",
+        "src/styles/*-css.js"
+      ]
+    },
+    "build:version": {
+      "outputs": ["src/*Version.js"]
+    },
+    "build:watch": {
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
+    "build:docs": {
+      "outputs": ["README.md", "demo/index.*", "docs/partials/*.md"]
+    },
+    "dev": {
+      "dependsOn": ["build"],
+      "persistent": true
+    },
+    "dev:closed": {
+      "dependsOn": ["build"],
+      "persistent": true
+    },
+    "clean": {
+      "cache": false
+    },
+    "test": {
+      "dependsOn": ["^build","build"],
+      "outputs": ["coverage/**"],
+      "inputs": ["src/**/*.js", "test/**/*.js"]
+    },
+    "test:watch": {
+      "dependsOn": ["build"],
+      "persistent": true,
+      "cache": false
+    },
+    "lint": {
+      "outputs": []
+    },
+    "@aurodesignsystem/build-tools#build:formkit-version": {
+      "inputs": ["src/writeFormkitVersion.mjs"],
+      "outputs": ["../version/version.js"]
+    },
+    "@aurodesignsystem/build-tools#build:docs:kit": {
+      "inputs": ["../../docs/partials/**/*", "../../docs/templates/**/*", "src/kitDocProcessor.mjs"],
+      "outputs": ["../../README.md"]
+    },
+    "@aurodesignsystem/auro-checkbox#build": {
+      "dependsOn": [
+        "@aurodesignsystem/auro-layout-element#build",
+        "@aurodesignsystem/auro-helptext#build"
+      ]
+    },
+    "@aurodesignsystem/auro-form#test": {
+      "dependsOn": [
+        "^build",
+        "build",
+        "@aurodesignsystem/auro-input#build",
+        "@aurodesignsystem/auro-datepicker#build",
+        "@aurodesignsystem/auro-counter#build",
+        "@aurodesignsystem/auro-radio#build",
+        "@aurodesignsystem/auro-checkbox#build",
+        "@aurodesignsystem/auro-combobox#build",
+        "@aurodesignsystem/auro-menu#build",
+        "@aurodesignsystem/auro-select#build"
+      ]
+    },
+    "@aurodesignsystem/auro-combobox#build": {
+      "dependsOn": [
+        "@aurodesignsystem/auro-bibtemplate#build",
+        "@aurodesignsystem/auro-input#build",
+        "@aurodesignsystem/auro-dropdown#build"
+      ]
+    },
+    "@aurodesignsystem/auro-datepicker#build": {
+      "dependsOn": [
+        "@aurodesignsystem/auro-bibtemplate#build",
+        "@aurodesignsystem/auro-input#build",
+        "@aurodesignsystem/auro-dropdown#build"
+      ]
+    },
+    "@aurodesignsystem/auro-dropdown#build": {
+      "dependsOn": [
+        "@aurodesignsystem/auro-helptext#build"
+      ]
+    },
+    "@aurodesignsystem/auro-input#build": {
+      "dependsOn": [
+        "@aurodesignsystem/auro-layout-element#build",
+        "@aurodesignsystem/auro-helptext#build"
+      ]
+    },
+    "@aurodesignsystem/auro-radio#build": {
+      "dependsOn": [
+        "@aurodesignsystem/auro-helptext#build"
+      ]
+    },
+    "@aurodesignsystem/auro-select#build": {
+      "dependsOn": [
+        "@aurodesignsystem/auro-dropdown#build"
+      ]
+    }
+  }
+}

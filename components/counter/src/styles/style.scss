@@ -1,0 +1,70 @@
+// Copyright (c) Alaska Air. All right reserved. Licensed under the Apache-2.0 license.
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+// Support for fallback values
+@use "@aurodesignsystem/design-tokens/dist/legacy/auro-classic/SCSSVariables" as vac;
+@use '@aurodesignsystem/webcorestylesheets/src/breakpoints';
+
+// Import type classes
+@use '@aurodesignsystem/webcorestylesheets/dist/bundled/type/classes.alaska.min.css';
+
+.counter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--ds-size-150, vac.$ds-size-150);
+}
+
+.content {
+  display: flex;
+  flex-flow: column;  
+}
+
+[name="description"] {
+  &::slotted(*) {
+    display: block;
+  }
+}
+
+.quantityWrapper {
+  width: var(--ds-size-400, vac.$ds-size-400);
+  height: calc(var(--ds-size-25, vac.$ds-size-25) + var(--ds-size-400, vac.$ds-size-400));
+  align-content: center;
+  cursor: default;
+  text-align: center;
+}
+
+:host{
+  position: relative;
+  text-align: left;
+
+  &::part(counterControl) {
+    display: flex;
+    border-radius: var(--ds-size-500, vac.$ds-size-500);
+
+    // prevent double-tap zoom on iOS (included in button for enabled state behaving differently)
+    touch-action: manipulation;
+
+    &:focus-visible {
+      outline-offset: 0;
+      outline-style: solid;
+      outline-width: var(--ds-size-25, vac.$ds-size-25);
+    }
+  }
+
+  &::part(controlMinus) {
+    --ds-auro-counter-control-border-radius: var(--ds-size-500, #{vac.$ds-size-500}) 0 0 var(--ds-size-500, #{vac.$ds-size-500});
+    --ds-auro-counter-control-padding: var(--ds-size-50, #{vac.$ds-size-50}) var(--ds-size-50, #{vac.$ds-size-50}) var(--ds-size-50, #{vac.$ds-size-50}) var(--ds-size-100, #{vac.$ds-size-100});
+  }
+
+  &::part(controlPlus) {
+    --ds-auro-counter-control-border-radius: 0 var(--ds-size-500, #{vac.$ds-size-500}) var(--ds-size-500, #{vac.$ds-size-500}) 0;
+    --ds-auro-counter-control-padding: var(--ds-size-50, #{vac.$ds-size-50}) var(--ds-size-100, #{vac.$ds-size-100}) var(--ds-size-50, #{vac.$ds-size-50}) var(--ds-size-50, #{vac.$ds-size-50});
+  }
+}
+
+auro-counter-button {
+  display: flex;
+}

@@ -1,0 +1,16 @@
+// Copyright (c) Alaska Air. All right reserved. Licensed under the Apache-2.0 license.
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+// Support for fallback values
+@use "@aurodesignsystem/design-tokens/dist/legacy/auro-classic/SCSSVariables" as vac;
+@use '@aurodesignsystem/webcorestylesheets/src/breakpoints';
+
+/* stylelint-disable no-descending-specificity, selector-max-attribute, selector-nest-combinators */
+
+:host([isindropdown]) {
+  .wrapper {
+    padding: var(--ds-size-300, vac.$ds-size-300);
+  }
+}

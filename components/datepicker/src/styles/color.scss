@@ -1,0 +1,70 @@
+// Copyright (c) 2024 Alaska Airlines. All right reserved. Licensed under the Apache-2.0 license
+// See LICENSE in the project root for license information.
+
+/* stylelint-disable max-nesting-depth, declaration-no-important, selector-class-pattern, declaration-empty-line-before */
+
+@use "@aurodesignsystem/design-tokens/dist/themes/alaska/SCSSVariables--alaska" as v;
+
+@use '@aurodesignsystem/webcorestylesheets/src/breakpoints';
+@use '@aurodesignsystem/webcorestylesheets/src/utilityClasses/displayProperties';
+
+:host {
+  label {
+    color: var(--ds-auro-datepicker-label-text-color);
+  }
+
+  .inputDivider {
+    background-color: var(--ds-auro-datepicker-range-input-divider-color);
+  }
+
+  .error {
+    color: var(--ds-auro-datepicker-error-icon-color);
+  }
+}
+
+[auro-dropdown] {
+  --ds-auro-dropdown-trigger-outline-color: var(--ds-auro-datepicker-outline-color);
+}
+
+[auro-input] {
+  &::part(wrapper) {
+    --ds-auro-input-border-color: transparent;
+    --ds-auro-input-container-color: transparent;
+  }
+}
+
+.dpTriggerContent {
+  [auro-input] {
+    &:nth-child(2) {
+      &:before {
+        background-color: var(--ds-auro-datepicker-range-input-divider-color);
+      }
+    }
+  }
+}
+
+// disabled state
+:host(:not([ondark])[disabled]),
+:host(:not([appearance="inverse"])[disabled]) {
+  --ds-auro-datepicker-border-color: var(--ds-basic-color-border-subtle, #{v.$ds-basic-color-border-subtle});
+  --ds-auro-datepicker-label-text-color: var(--ds-basic-color-texticon-disabled, #{v.$ds-basic-color-texticon-disabled});
+  --ds-auro-datepicker-placeholder-text-color: var(--ds-basic-color-texticon-disabled, #{v.$ds-basic-color-texticon-disabled});
+}
+
+:host([ondark][disabled]),
+:host([appearance="inverse"][disabled]) {
+  --ds-auro-datepicker-border-color: var(--ds-advanced-color-button-primary-border-inverse-disabled, #{v.$ds-advanced-color-button-primary-border-inverse-disabled});
+  --ds-auro-datepicker-label-text-color: var(--ds-basic-color-texticon-inverse-disabled, #{v.$ds-basic-color-texticon-inverse-disabled});
+  --ds-auro-datepicker-placeholder-text-color: var(--ds-basic-color-texticon-inverse-disabled, #{v.$ds-basic-color-texticon-inverse-disabled});
+}
+
+// error state
+:host(:not([ondark]):is([validity]:not([validity='valid']))),
+:host(:not([appearance="inverse"]):is([validity]:not([validity='valid']))) {
+  --ds-auro-datepicker-outline-color: var(--ds-basic-color-status-error, #{v.$ds-basic-color-status-error});
+}
+
+:host([ondark]:is([validity]:not([validity='valid']))),
+:host([appearance="inverse"]:is([validity]:not([validity='valid']))) {
+  --ds-auro-datepicker-outline-color: var(--ds-advanced-color-state-error-inverse, #{v.$ds-advanced-color-state-error-inverse});
+}

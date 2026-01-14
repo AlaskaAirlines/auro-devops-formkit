@@ -1,0 +1,18 @@
+{
+  "name": "@aurodesignsystem/build-tools",
+  "description": "Shared build tools for auro-formkit monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "tsc",
+  "exports": {
+    ".": "./src/index.js",
+    "./formVersionWriter": "./src/formVersionWriter.mjs",
+    "./docProcessor": "./src/docProcessor.mjs",
+    "./kitDocProcessor": "./src/kitDocProcessor.mjs"
+  },
+  "scripts": {
+    "build:formkit-version": "node ./src/writeFormkitVersion.mjs"
+  }
+}

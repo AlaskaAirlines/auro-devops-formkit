@@ -1,0 +1,107 @@
+// Copyright (c) 2020 Alaska Airlines. All right reserved. Licensed under the Apache-2.0 license
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+/* stylelint-disable custom-property-empty-line-before,
+   custom-property-pattern,
+   selector-max-class,
+   scss/selector-nest-combinators,
+   order/properties-order,
+   max-nesting-depth,
+   selector-max-combinators,
+   selector-max-compound-selectors,
+   selector-class-pattern,
+   rule-empty-line-before,
+   scss/selector-no-redundant-nesting-selector,
+   no-descending-specificity,
+   no-duplicate-selectors,
+   declaration-empty-line-before */
+
+// Import Auro tokens
+@use "@aurodesignsystem/design-tokens/dist/legacy/auro-classic/SCSSVariables" as vac;
+
+@use "@aurodesignsystem/webcorestylesheets/src/breakpoints" as vb;
+@use "@aurodesignsystem/webcorestylesheets/src/core";
+@use '@aurodesignsystem/webcorestylesheets/src/utilityClasses/displayProperties';
+@use '@aurodesignsystem/webcorestylesheets/dist/bundled/type/classes.alaska.min.css';
+
+// container styles - defines the look of the outer custom component
+:host {
+  display: block;
+  --cbxLocation: var(--ds-size-50, #{vac.$ds-size-50});
+}
+
+fieldset {
+  all: unset;
+}
+
+.displayFlex {
+  slot {
+    @include vb.auro_grid-breakpoint--sm {
+      display: flex;
+    }
+  }
+}
+
+.cbxContainer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: var(--ds-size-100, #{vac.$ds-size-100});
+  padding-left: var(--ds-size-100, #{vac.$ds-size-100});
+  padding-right: var(--ds-size-100, #{vac.$ds-size-100});
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.label {
+  display: block;
+  padding-top: var(--ds-size-50, #{vac.$ds-size-50});
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+:host([disabled]) {
+  .cbxContainer {
+    pointer-events: none;
+    cursor: default;
+  }
+}
+
+// No tokens available for values used here
+.inputContainer {
+  position: relative;
+  &:after {
+    -webkit-tap-highlight-color: transparent;
+    display: block;
+    content: '';
+    align-items: center;
+    justify-content: center;
+
+    margin-top: var(--cbxLocation);
+    width: calc(var(--ds-size-200, #{vac.$ds-size-200}) + var(--ds-size-50, #{vac.$ds-size-50}));
+    height: calc(var(--ds-size-200, #{vac.$ds-size-200}) + var(--ds-size-50, #{vac.$ds-size-50}));
+
+    border-width: 1px;
+    border-style: solid;
+    border-radius: var(--ds-border-radius, #{vac.$ds-border-radius});
+    outline-style: solid;
+    outline-width: 1px;
+    z-index: 0;
+  }
+}
+
+.svg--cbx {
+  position: absolute;
+  left: 0;
+  top: 3px;
+  bottom: 3px;
+
+  z-index: 1;
+  pointer-events: none;
+}

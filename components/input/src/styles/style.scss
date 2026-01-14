@@ -1,0 +1,76 @@
+@use '@aurodesignsystem/webcorestylesheets/src/utilityClasses/displayProperties';
+@use "@aurodesignsystem/webcorestylesheets/dist/bundled/type/classes.alaska.min.css";
+
+// COMMON FOR ALL ---------------------------------------------------
+
+/* stylelint-disable selector-max-class, max-nesting-depth, selector-class-pattern, scss/selector-nest-combinators */
+
+:host {
+  display: block;
+}
+
+.wrapper:has(:enabled) {
+  cursor: text;
+  
+  label {
+    cursor: text;
+  } 
+}
+
+.helpTextClasses {
+  cursor: default;
+}
+
+input {
+  // !important to override user agent styles that are also !important.
+  /* stylelint-disable declaration-no-important */
+  overflow: clip !important;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: unset;
+  outline: none;
+  overflow-clip-margin: 0 !important;
+  text-overflow: ellipsis;
+  
+  &::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+    // stylelint-disable-next-line property-no-vendor-prefix
+    -webkit-appearance: none;
+  }
+
+  /* stylelint-enable declaration-no-important */
+}
+
+.displayValue {
+  display: none;
+
+  &.hasContent:is(.withValue):not(.hasFocus) {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.accents {
+  &:not(.util_displayHidden) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+}
+
+.wrapper:not(:focus-within):not(:hover) { // stylelint-disable selector-not-notation
+  .notificationBtn.passwordBtn,
+  .notification.clear {
+    display: none;
+  }
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

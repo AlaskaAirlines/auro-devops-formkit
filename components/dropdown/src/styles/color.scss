@@ -1,0 +1,98 @@
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+/* stylelint-disable scss/dollar-variable-pattern, selector-class-pattern, no-descending-specificity */
+
+// Support for fallback values
+@use '@aurodesignsystem/design-tokens/dist/themes/alaska/SCSSVariables--alaska' as v;
+
+:host(:not([layout*='classic'])) {
+  --ds-auro-dropdown-trigger-border-color: transparent;
+}
+
+:host(:not([disabled], [onDark])),
+:host(:not([disabled], [appearance="inverse"])) {
+  .wrapper {
+    &:focus-within,
+    &:active {
+      --ds-auro-dropdown-trigger-border-color: var(--ds-advanced-color-state-focused, #{v.$ds-advanced-color-state-focused});
+      --ds-auro-dropdown-trigger-outline-color: var(--ds-advanced-color-state-focused, #{v.$ds-advanced-color-state-focused});
+    }
+
+    &:hover {
+      --ds-auro-dropdown-trigger-background-color: var(--ds-auro-dropdown-trigger-hover-background-color);
+    }
+  }
+}
+
+:host(:not([ondark])),
+:host(:not([appearance="inverse"])) {
+  .wrapper {
+    border-color: var(--ds-auro-dropdown-trigger-border-color);
+    background-color: var(--ds-auro-dropdown-trigger-background-color);
+    color: var(--ds-auro-dropdown-trigger-text-color);
+  }
+}
+
+/* Disabled state */
+:host(:not([onDark])[disabled]),
+:host(:not([appearance="inverse"])[disabled]) {
+  --ds-auro-dropdown-trigger-text-color: var(--ds-basic-color-texticon-disabled, #{v.$ds-basic-color-texticon-disabled});
+  --ds-auro-dropdown-label-text-color: var(--ds-basic-color-texticon-disabled, #{v.$ds-basic-color-texticon-disabled});
+  --ds-auro-dropdown-trigger-border-color: var(--ds-basic-color-border-subtle, #{v.$ds-basic-color-border-subtle});
+
+  #triggerLabel {
+    cursor: default;
+  }
+}
+
+:host(:not([ondark])[error]),
+:host(:not([appearance="inverse"])[error]) {
+  --ds-auro-dropdown-trigger-border-color: var(--ds-basic-color-status-error, #{v.$ds-basic-color-status-error});
+}
+
+:host(:not([disabled])[onDark]),
+:host(:not([disabled])[appearance="inverse"]) {
+  .wrapper {
+    &:focus-within,
+    &:active {
+      --ds-auro-dropdown-trigger-border-color: var(--ds-advanced-color-state-focused-inverse, #{v.$ds-advanced-color-state-focused-inverse});
+      --ds-auro-dropdown-trigger-outline-color: var(--ds-advanced-color-state-focused-inverse, #{v.$ds-advanced-color-state-focused-inverse});
+    }
+    
+    &:hover {
+      --ds-auro-dropdown-trigger-background-color: var(--ds-auro-dropdown-trigger-hover-background-color);
+    }
+  }
+}
+
+/* onDark */
+:host([onDark]),
+:host([appearance="inverse"]) {
+  .label, .helpText {
+    color: var(--ds-auro-dropdown-label-text-color);
+  }
+
+  .wrapper {
+    border-color: var(--ds-auro-dropdown-trigger-border-color);
+    background-color: var(--ds-auro-dropdown-trigger-background-color);
+    color: var(--ds-auro-dropdown-trigger-text-color);
+  }
+}
+
+:host([onDark][disabled]),
+:host([appearance="inverse"][disabled]) {
+  --ds-auro-dropdown-trigger-text-color: var(--ds-basic-color-texticon-inverse-disabled, #{v.$ds-basic-color-texticon-inverse-disabled});
+  --ds-auro-dropdown-label-text-color: var(--ds-basic-color-texticon-inverse-disabled, #{v.$ds-basic-color-texticon-inverse-disabled});
+  --ds-auro-dropdown-trigger-container-color: var(--ds-advanced-color-shared-background-inverse-disabled, #{v.$ds-advanced-color-shared-background-inverse-disabled});
+
+  #triggerLabel {
+    cursor: default;
+  }
+}
+
+:host([ondark][error]),
+:host([appearance="inverse"][error]) {
+  --ds-auro-dropdown-trigger-border-color: var(--ds-advanced-color-state-error-inverse, #{v.$ds-advanced-color-state-error-inverse});
+}

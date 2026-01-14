@@ -1,0 +1,32 @@
+.DS_Store
+node_modules/
+docTemplates/
+.cache/
+.vscode/
+version.js
+version.d.ts
+
+## Demo support files
+components/**/demo/*.md
+components/**/demo/*.min.js
+
+## CSS built from Sass process
+components/**/src/**/*.css
+components/**/src/**/*.css.map
+
+## *-css built from sass-render process
+*-css.js
+
+## dist files
+dist/
+build/
+
+## Code coverage reports
+coverage/
+
+## Turbo repo
+.turbo
+
+## ignore all files/folders in generated auro-formkit-demo
+auro-formkit-demo/**/*.**
+auro-formkit-demo.zip

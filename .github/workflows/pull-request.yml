@@ -1,0 +1,24 @@
+name: PR Workflow
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches-ignore:
+      - 'rc/**'
+      - 'main'
+
+jobs:
+  action:
+    uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@dev
+    with:
+      component: '["checkbox", "combobox", "counter", "datepicker", "dropdown", "form", "input", "menu", "radio", "select"]'
+      is-monorepo: true
+      cache-dirs: |
+        ./components/**/dist
+        ./components/**/demo
+        ./components/**/node_modules
+        ./node_modules
+        ./custom-elements.json
+    secrets:
+      AURO_SURGE_TOKEN: $\{{ secrets.AURO_SURGE_TOKEN }}
+      NPM_TOKEN: $\{{ secrets.NPM_TOKEN }}

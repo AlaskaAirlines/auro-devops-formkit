@@ -1,0 +1,5 @@
+@use "@aurodesignsystem/design-tokens/dist/themes/alaska/SCSSVariables--alaska" as v;
+
+:host {
+  --ds-auro-helptext-color: var(--ds-basic-color-texticon-muted, #{v.$ds-basic-color-texticon-muted});
+}

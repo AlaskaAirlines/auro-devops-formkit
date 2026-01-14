@@ -1,0 +1,83 @@
+// stylelint-disable selector-max-class, selector-class-pattern
+
+// Import Auro Sass variables
+@use "@aurodesignsystem/design-tokens/dist/legacy/auro-classic/SCSSVariables" as vac;
+
+// general WCSS imports
+@use "@aurodesignsystem/webcorestylesheets/src/breakpoints";
+@use "@aurodesignsystem/webcorestylesheets/src/core";
+@use "@aurodesignsystem/webcorestylesheets/src/animation";
+
+$auro-inset-spacing-options: lg;
+$auro-inset-directions: '--squish';
+
+@use "@aurodesignsystem/webcorestylesheets/src/utilityMixins/insetUtility";
+
+// adjust alignment for slotted SVG icon
+::slotted(svg) {
+  vertical-align: middle;
+}
+
+// Note: without this, events on a disabled element will still fire
+slot {
+  pointer-events: none;
+}
+
+.contentWrapper {
+  display: flex;
+  align-items: center;
+
+  .textSlot {
+    display: inline-flex;
+    height: var(--ds-size-300, vac.$ds-size-300);
+    align-items: center;
+  }
+}
+
+.auro-button {
+  position: relative;
+  display: inline-flex;
+  overflow: visible;
+  width: calc(var(--ds-size-50, vac.$ds-size-50) + var(--ds-size-400, vac.$ds-size-400));
+  height: calc(var(--ds-size-25, vac.$ds-size-25) + var(--ds-size-400, vac.$ds-size-400));
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ds-auro-counter-control-padding);
+  border: none;
+  border-radius: var(--ds-auro-counter-control-border-radius);
+
+  // removes margins around button in Safari
+  margin: 0;
+  cursor: pointer;
+  gap: var(--ds-size-100, vac.$ds-size-100);
+  line-height: unset;
+
+  // prevent double-tap zoom on iOS (included in counterControl for disabled state behaving differently)
+  touch-action: manipulation;
+
+  // macOS / iOS agents
+  -webkit-touch-callout: none;
+  user-select: none;
+  white-space: nowrap;
+
+  // handle active state
+  &:active {
+    .contentWrapper {
+      transform: scale(0.95);
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    transform: unset;
+  }
+
+  &:focus-visible {
+    &:not(&:disabled) {
+        outline: none;
+        transform: unset;
+    }
+  }
+
+}

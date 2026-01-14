@@ -1,0 +1,87 @@
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+/* stylelint-disable
+  scss/dollar-variable-pattern,
+  selector-class-pattern,
+  max-nesting-depth,
+  selector-max-class
+  */
+
+// Support for fallback values
+@use '@aurodesignsystem/design-tokens/dist/themes/alaska/SCSSVariables--alaska' as v;
+
+.wrapper {
+  border-color: var(--ds-auro-input-border-color);
+  background-color: var(--ds-auro-input-container-color);
+  color: var(--ds-auro-input-text-color);
+
+  label {
+    color: var(--ds-auro-input-label-text-color);
+  }
+
+  input {
+    caret-color: var(--ds-auro-input-caret-color);
+    color: var(--ds-auro-input-text-color);
+
+    &::placeholder {
+      color: var(--ds-auro-input-placeholder-text-color);
+    }
+
+    &:focus {
+      &::placeholder {
+        color: var(--ds-auro-input-placeholder-text-color);
+      }
+    }
+  }
+
+}
+
+:host(:not([ondark])),
+:host(:not([appearance="inverse"])) {
+  .wrapper {
+    &:focus-within {
+      --ds-auro-input-border-color: var(--ds-basic-color-border-brand, #{v.$ds-basic-color-border-brand});
+    }
+  }
+}
+
+:host([ondark]),
+:host([appearance="inverse"]) {
+  .wrapper {
+    &:focus-within {
+      --ds-auro-input-border-color: var(--ds-basic-color-border-inverse, #{v.$ds-basic-color-border-inverse});
+    }
+  }
+}
+
+:host(:is([validity]:not([validity='valid']))) {
+  .wrapper {
+    --ds-auro-input-border-color: var(--ds-basic-color-status-error, #{v.$ds-basic-color-status-error});
+  }
+}
+
+:host([ondark]:is([validity]:not([validity='valid']))),
+:host([appearance="inverse"]:is([validity]:not([validity='valid']))) {
+  .wrapper {
+    --ds-auro-input-border-color: var(--ds-advanced-color-state-error-inverse, #{v.$ds-advanced-color-state-error-inverse});
+  }
+}
+
+// disabled state
+:host(:not([ondark])[disabled]),
+:host(:not([appearance="inverse"])[disabled]) {
+  --ds-auro-input-border-color: var(--ds-basic-color-border-subtle, #{v.$ds-basic-color-border-subtle});
+  --ds-auro-input-label-text-color: var(--ds-basic-color-texticon-disabled, #{v.$ds-basic-color-texticon-disabled});
+  --ds-auro-input-text-color: var(--ds-basic-color-texticon-disabled, #{v.$ds-basic-color-texticon-disabled});
+  --ds-auro-input-placeholder-text-color: var(--ds-basic-color-texticon-disabled, #{v.$ds-basic-color-texticon-disabled});
+}
+
+:host([ondark][disabled]),
+:host([appearance="inverse"][disabled]) {
+  --ds-auro-input-border-color: var(--ds-advanced-color-button-primary-border-inverse-disabled, #{v.$ds-advanced-color-button-primary-border-inverse-disabled});
+  --ds-auro-input-label-text-color: var(--ds-basic-color-texticon-inverse-disabled, #{v.$ds-basic-color-texticon-inverse-disabled});
+  --ds-auro-input-text-color: var(--ds-basic-color-texticon-inverse-disabled, #{v.$ds-basic-color-texticon-inverse-disabled});
+  --ds-auro-input-placeholder-text-color: var(--ds-basic-color-texticon-inverse-disabled, #{v.$ds-basic-color-texticon-inverse-disabled});
+}

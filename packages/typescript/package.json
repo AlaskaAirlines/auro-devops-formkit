@@ -1,0 +1,17 @@
+{
+  "name": "@aurodesignsystem/typescript",
+  "description": "Shared Typescript configurations for auro-formkit monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf .turbo && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "@types/mocha": "^10.0.10",
+    "@types/chai": "^5.2.1"
+  },
+  "engines": {
+    "node": "^20.x || ^22.x"
+  }
+}

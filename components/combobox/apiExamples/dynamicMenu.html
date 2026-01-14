@@ -1,0 +1,53 @@
+<!-- HTML example file -->
+<!-- ----------------- -->
+<auro-combobox
+  id="dynamicMenuExample"
+  value="TAN"
+  layout="snowflake"
+  shape="snowflake"
+  size="lg"
+  appearance="inverse"
+  noFilter
+  persistInput
+  dvInputOnly
+  setCustomValidityValueMissing="Please select an option from the list."
+  required>
+  <span slot="bib.fullscreen.headline">Dynamic Combobox Header</span>
+  <span slot="label">First</span>
+  <!--
+    The auro-combobox element requires an empty auro-menu element
+    due to the requirements of auro-dropdown and auro-input
+  -->
+  <auro-menu id="initMenu"></auro-menu>
+</auro-combobox>
+<br>
+<auro-combobox
+  id="dynamicMenuExampleTwo"
+  value="GER"
+  layout="snowflake"
+  shape="snowflake"
+  size="lg"
+  appearance="inverse"
+  noFilter
+  persistInput
+  dvInputOnly
+  setCustomValidityValueMissing="Please select an option from the list."
+  required>
+  <span slot="bib.fullscreen.headline">Dynamic Combobox Header</span>
+  <span slot="label">Second</span>
+  <!--
+    The auro-combobox element requires an empty auro-menu element
+    due to the requirements of auro-dropdown and auro-input
+  -->
+  <auro-menu id="initMenuTwo"></auro-menu>
+</auro-combobox>
+<br>
+<auro-button id="dynamicMenuSwapButton">
+  Swap Values
+</auro-button>
+
+<auro-button id="dynamicMenuPersistButton">
+  Toggle Persist Input
+</auro-button>
+
+

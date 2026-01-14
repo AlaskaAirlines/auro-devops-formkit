@@ -1,0 +1,32 @@
+// Copyright (c) 2025 Alaska Airlines. All right reserved. Licensed under the Apache-2.0 license
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+/* stylelint-disable scss/selector-nest-combinators, selector-class-pattern */
+
+@use "@aurodesignsystem/design-tokens/dist/legacy/auro-classic/SCSSVariables" as vac;
+
+@use "@aurodesignsystem/webcorestylesheets/dist/bundled/type/classes.alaska.min.css";
+
+:host {
+  position: relative;
+  display: block;
+}
+
+.helptext-wrapper {
+  display: none;
+}
+
+.helptext-wrapper[visible] {
+  display: block;
+}
+
+::slotted(*:not(:empty)) {
+  margin-top: var(--ds-size-50, vac.$ds-size-50);
+  margin-bottom: 0;
+}
+
+::slotted(p) {
+  margin-block: 0;
+}

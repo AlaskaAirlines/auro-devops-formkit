@@ -1,0 +1,854 @@
+/* eslint-disable max-lines */
+import { fixture, html, expect, waitUntil, elementUpdated, oneEvent } from '@open-wc/testing';
+import { setViewport } from '@web/test-runner-commands';
+import '../src/registered.js';
+import '../../menu/src/registered.js';
+
+// describe('auro-combobox', () => {
+//   runFulltest(false);
+// });
+
+describe('auro-combobox in mobile screen', () => {
+  runFulltest(true);
+});
+
+function runFulltest(mobileview) {
+  it('auro-combobox custom element is defined', async () => {
+    const el = await Boolean(customElements.get("auro-combobox"));
+
+    await expect(el).to.be.true;
+  });
+
+  it('auro-combobox is accessible', async () => {
+    const el = await noFilterFixture(mobileview);
+
+    await elementUpdated(el);
+
+    await expect(el).to.be.accessible();
+  });
+
+  it('should pass inputmode to the input element', async () => {
+    const el = await defaultFixture(mobileview);
+    const auroInput = el.input;
+    const inputmode = 'numeric';
+    auroInput.inputmode = inputmode;
+    await elementUpdated(el);
+
+    const input = auroInput.shadowRoot.querySelector("input");
+    await expect(input.getAttribute("inputmode"), inputmode);
+
+    input.removeAttribute('inputmode');
+    await elementUpdated(el);
+    await expect(input.hasAttribute("inputmode")).to.be.false;
+  });
+
+  it('enforces menu selection when behavior is set to filter', async () => {
+    const el = await filterFixture(mobileview);
+    const {menu} = el;
+    
+    // initial state
+    await expect(el.value).to.be.undefined;
+    await expect(el.hasAttribute('error')).to.be.false;
+
+    // type in a value that matches an option
+    setInputValue(el, 'pp');
+    await elementUpdated(el);
+    await expect(el.value).to.be.undefined;
+    await expect(el.hasAttribute('error')).to.be.false;
+    await expect(el.hasAttribute('validity')).to.be.false;
+    
+    // blur the input to trigger validation
+    el.shadowRoot.activeElement.blur();
+    await elementUpdated(el);
+
+    // should be errored because no option was selected
+    await expect(el.getAttribute('validity')).to.be.equal('valueMissing');
+    await expect(el.errorMessage).to.be.equal('filter error');
+
+    // select a value from the menu by setting the value of the combobox
+    el.value = 'Apples';
+
+    // wait for the element to be updated
+    await elementUpdated(el);
+
+    // trigger validation
+    el.validate(true);
+    await elementUpdated(el);
+
+    // expect the value to be set to 'Apples' and the error to be cleared
+    await expect(el.value).to.be.equal('Apples');
+    await expect(el.hasAttribute('error')).to.be.false;
+    await expect(el.getAttribute('validity')).to.be.equal('valid');
+  });
+
+  it('noFilter attribute results in no suggestion filtering', async () => {
+    const el = await noFilterFixture(mobileview);
+
+    const menu = el.querySelector('auro-menu');
+    const menuOptions = menu.querySelectorAll('auro-menuoption');
+    const visibleMenuOptions = [];
+
+    setInputValue(el, 'pp');
+
+    for (let oIndex = 0; oIndex < menuOptions.length; oIndex += 1) {
+      if (!menuOptions[oIndex].hasAttribute('hidden')) {
+        visibleMenuOptions.push(menuOptions[oIndex]);
+      }
+    };
+
+    await expect(visibleMenuOptions.length).to.be.equal(2);
+  });
+
+  it('can programmatically apply focus to input', async () => {
+    const el = await defaultFixture(mobileview);
+
+    const { input } = el;
+
+    el.focus();
+
+    await expect(el.shadowRoot.activeElement).to.be.equal(input);
+  });
+
+  it('shows the bib on click only when a value is typed', async () => {
+    const el = await defaultFixture(mobileview);
+    const trigger = el.dropdown.querySelector('[slot="trigger"]');
+    trigger.click();
+    await expect(el.dropdown.isPopoverVisible).to.be.false;
+    setInputValue(el, 'ra');
+
+    trigger.click();
+
+    await expect(el.dropdown.isPopoverVisible).to.be.true;
+  });
+
+  it('shows the bib when pressing enter and a value is typed', async () => {
+    const el = await defaultFixture(mobileview);
+
+    // Validate bib is not shown when hitting enter but there is no value in the input
+    el.focus();
+    el.dispatchEvent(new KeyboardEvent('keydown', {
+      'key': 'Enter'
+    }));
+    await expect(el.dropdown.isPopoverVisible).to.be.false;
+
+    // Validate bib is shown when hitting enter but there is a value in the input
+    setInputValue(el, 'pp');
+    el.dispatchEvent(new KeyboardEvent('keydown', {
+      'key': 'Enter'
+    }));
+
+    await expect(el.dropdown.isPopoverVisible).to.be.true;
+  });
+
+  it('hides the bib when there are no available options', async () => {
+    const el = await defaultFixture(mobileview);
+
+    setInputValue(el, 'zzzzzz');
+    await expect(el.dropdown.isPopoverVisible).to.be.false;
+  });
+
+  it(`hides the bib when making a selection with Enter`, async () => {
+    const el = await defaultFixture(mobileview);
+
+    el.focus();
+    setInputValue(el, 'a');
+    el.dispatchEvent(new KeyboardEvent('keydown', {
+      key: 'Enter'
+    }));
+
+    await elementUpdated(el);
+    await expect(el.dropdown.isPopoverVisible).to.be.true;
+
+    const options = el.querySelectorAll('auro-menuoption');
+    setTimeout(() => {
+      el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+      el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    });
+
+    await oneEvent(el, 'auroMenu-selectedOption');
+    await expect(el.value === options[0].textContent);
+
+    await oneEvent(el, 'auroDropdown-toggled');
+    await expect(el.dropdown.isPopoverVisible).to.be.false;
+  });
+
+  it(`selects the current active option when hitting Tab key`, async () => {
+    const el = await defaultFixture(mobileview);
+
+    el.focus();
+    setInputValue(el, 'a');
+
+    await elementUpdated(el);
+
+    const options = el.querySelectorAll('auro-menuoption');
+    setTimeout(() => {
+      el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+      el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab' }));
+    });
+
+    await expect(el.value === options[0].textContent);
+  });
+
+  // it('hides the bib when tabbing away from combobox', async () => {
+  //   const el = await defaultFixture(mobileview);
+  //   const trigger = el.dropdown.querySelector('[slot="trigger"]');
+
+  //   setInputValue(el, 'p');
+  //   trigger.click();
+  //   await expect(el.dropdown.isPopoverVisible).to.be.true;
+
+  //   document.activeElement.dispatchEvent(new KeyboardEvent('keydown', {
+  //     'key': 'Tab'
+  //   }));
+
+  //   await expect(el.dropdown.isPopoverVisible).to.be.false;
+  // });
+
+  it('hides the bib when selecting an option with a custom event', async () => {
+    const el = await customEventFixture(mobileview);
+
+    await expect(el.dropdown.isPopoverVisible).to.be.false;
+
+    setInputValue(el, 'a');
+    await elementUpdated(el);
+    if (mobileview) {
+      el.inputInBib.focus();
+      await waitUntil(() => el.shadowRoot.activeElement === el.inputInBib);
+    }
+
+    el.dispatchEvent(new KeyboardEvent('keydown', {
+      'key': 'Enter'
+    }));
+
+
+    el.dispatchEvent(new KeyboardEvent('keydown', {
+      'key': 'ArrowDown'
+    }));
+
+    el.dispatchEvent(new KeyboardEvent('keydown', {
+      'key': 'Enter'
+    }));
+
+    await expect(el.dropdown.isPopoverVisible).to.be.false;
+  });
+
+  it('navigates menu with up and down arrow keys', async () => {
+    const el = await defaultFixture(mobileview);
+
+    // Validate bib is shown when hitting enter but there is a value in the input
+    setInputValue(el, 'pp');
+    el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    await elementUpdated(el);
+
+    setInputValue(el, 'a');
+    await elementUpdated(el);
+
+    if (mobileview) {
+      el.inputInBib.focus();
+      await waitUntil(() => el.shadowRoot.activeElement === el.inputInBib);
+    }
+
+    el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    await elementUpdated(el);
+
+    const menu = el.querySelector('auro-menu');
+    const menuOptions = menu.querySelectorAll('auro-menuoption');
+
+    await expect(el.optionActive).to.be.equal(menuOptions[0]);
+    await expect(menuOptions[0].classList.contains('active')).to.be.true;
+    await expect(menuOptions[1].classList.contains('active')).to.be.false;
+
+    el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    await elementUpdated(el);
+
+    await expect(el.optionActive).to.be.equal(menuOptions[1]);
+    await expect(menuOptions[0].classList.contains('active')).to.be.false;
+    await expect(menuOptions[1].classList.contains('active')).to.be.true;
+
+    el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
+    await elementUpdated(el);
+
+    await expect(el.optionActive).to.be.equal(menuOptions[0]);
+    await expect(menuOptions[0].classList.contains('active')).to.be.true;
+    await expect(menuOptions[1].classList.contains('active')).to.be.false;
+  });
+
+  it('typing filters list of options', async () => {
+    const el = await defaultFixture(mobileview);
+
+    const menu = el.querySelector('auro-menu');
+    const menuOptions = menu.querySelectorAll('auro-menuoption');
+    const visibleMenuOptions = [];
+
+    setInputValue(el, 'pp');
+
+    for (let oIndex = 0; oIndex < menuOptions.length; oIndex += 1) {
+      if (!menuOptions[oIndex].hasAttribute('hidden')) {
+        visibleMenuOptions.push(menuOptions[oIndex]);
+      }
+    };
+
+    await expect(visibleMenuOptions.length).to.be.equal(1);
+    await expect(visibleMenuOptions[0].innerText).to.be.equal('Apples');
+
+    await expect(visibleMenuOptions[0].querySelector("strong")).to.exist;
+  });
+
+  it('fired `auroCombobox-valueSet` event on value update', async () => {
+    const el = await defaultFixture(mobileview);
+
+    setInputValue(el, 'a');
+    await elementUpdated(el);
+
+    setTimeout(() => {
+      el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+      el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    });
+
+    await oneEvent(el, 'auroCombobox-valueSet');
+  });
+
+  it('fires input event on typing', async () => {
+    const el = await defaultFixture(mobileview);
+
+    // Set up the event listener before triggering the input change
+    const inputEventPromise = oneEvent(el, 'input');
+    
+    // Trigger input change
+    setInputValue(el, 'a');
+    
+    // Wait for the input event to be fired
+    await inputEventPromise;
+  });
+
+  it('using the nomatch attribute with a matching value', async () => {
+    const el = await noMatchFixture(mobileview);
+
+    const menu = el.querySelector('auro-menu');
+    const menuOptions = menu.querySelectorAll('auro-menuoption');
+    const visibleMenuOptions = [];
+
+    setInputValue(el, 'pp');
+
+    for (let oIndex = 0; oIndex < menuOptions.length; oIndex += 1) {
+      if (!menuOptions[oIndex].hasAttribute('hidden')) {
+        visibleMenuOptions.push(menuOptions[oIndex]);
+      }
+    };
+
+    await expect(visibleMenuOptions.length).to.be.equal(1);
+    await expect(visibleMenuOptions[0].innerText).to.be.equal('Apples');
+
+    await expect(visibleMenuOptions[0].querySelector('strong')).to.exist;
+  });
+
+  it('using the nomatch attribute with no matching value', async () => {
+    const el = await noMatchFixture(mobileview);
+
+    const menu = el.querySelector('auro-menu');
+    const menuOptions = menu.querySelectorAll('auro-menuoption');
+    const visibleMenuOptions = [];
+
+    setInputValue(el, 'zzz');
+
+    for (let oIndex = 0; oIndex < menuOptions.length; oIndex += 1) {
+      if (!menuOptions[oIndex].hasAttribute('hidden')) {
+        visibleMenuOptions.push(menuOptions[oIndex]);
+      }
+    };
+
+    await expect(visibleMenuOptions.length).to.be.equal(1);
+    await expect(visibleMenuOptions[0].innerText).to.be.equal('No Matching Option');
+  });
+
+  it('using the persistent attribute always displays the persistent option', async () => {
+    const el = await persistentFixture(mobileview);
+
+    const menu = el.querySelector('auro-menu');
+    const menuOptions = menu.querySelectorAll('auro-menuoption');
+    const visibleMenuOptions = [];
+
+    setInputValue(el, 'pp');
+
+    for (let oIndex = 0; oIndex < menuOptions.length; oIndex += 1) {
+      if (!menuOptions[oIndex].hasAttribute('hidden')) {
+        visibleMenuOptions.push(menuOptions[oIndex]);
+      }
+    };
+
+    await expect(visibleMenuOptions.length).to.be.equal(2);
+    await expect(visibleMenuOptions[0].innerText).to.be.equal('Apples');
+    await expect(visibleMenuOptions[1].innerText).to.be.equal('Persistent');
+
+    await expect(visibleMenuOptions[0].querySelector("strong")).to.exist;
+  });
+
+  it('using the suggest attribute matches additional options', async () => {
+    const el = await suggestFixture(mobileview);
+
+    const menu = el.querySelector('auro-menu');
+    const menuOptions = menu.querySelectorAll('auro-menuoption');
+    const visibleMenuOptions = [];
+
+    setInputValue(el, 'pp');
+
+    for (let oIndex = 0; oIndex < menuOptions.length; oIndex += 1) {
+      if (!menuOptions[oIndex].hasAttribute('hidden')) {
+        visibleMenuOptions.push(menuOptions[oIndex]);
+      }
+    };
+
+    await expect(visibleMenuOptions.length).to.be.equal(2);
+    await expect(visibleMenuOptions[0].innerText).to.be.equal('Apples');
+    await expect(visibleMenuOptions[1].innerText).to.be.equal('Oranges');
+
+    await expect(visibleMenuOptions[0].querySelector("strong")).to.exist;
+  });
+
+  it('makes a selection programmatically', async () => {
+    const el = await defaultFixture(mobileview);
+
+    el.value = 'Apples';
+    await elementUpdated(el);
+
+    const selectedOption = el.querySelector('auro-menuoption[value="Apples"]');
+    el.optionSelected = selectedOption;
+    await elementUpdated(el);
+
+    await expect(el.value).to.deep.equal('Apples');
+    await expect(el.optionSelected).to.equal(selectedOption);
+  });
+
+  it('reset selection value programmatically', async () => {
+    const el = await presetValueFixture(mobileview);
+
+    el.value = undefined;
+
+    await elementUpdated(el);
+
+    await expect(el.optionSelected === undefined).to.be.true;
+  });
+
+  it('makes a selection using the keyboard', async () => {
+    const el = await defaultFixture(mobileview);
+
+    setInputValue(el, 'a');
+    await elementUpdated(el);
+
+    if (mobileview) {
+      el.inputInBib.focus();
+      await waitUntil(() => el.shadowRoot.activeElement === el.inputInBib);
+    }
+
+
+    el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    await elementUpdated(el);
+
+    el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    await elementUpdated(el);
+
+    await expect(el.value).to.equal('Apples');
+  });
+
+  it('Does not throw an error state when trying to programmatically set a value that doesn\'t match an option', async () => {
+    const el = await defaultFixture(mobileview);
+
+    await expect(el.hasAttribute('error')).to.be.false;
+
+    el.value = 'Dragon Fruit';
+
+    await elementUpdated(el);
+
+    await expect(el.hasAttribute('error')).to.be.false;
+  });
+
+  it('handles the required state being set', async () => {
+    const el = await requiredFixture(mobileview);
+
+    // error applied on blur
+    el.focus();
+
+    el.shadowRoot.activeElement.blur();
+    await elementUpdated(el);
+
+    await expect(el.getAttribute('validity')).to.be.equal('valueMissing');
+
+    // error because no option was selected yet
+    setInputValue(el, 'pp');
+    el.shadowRoot.activeElement.blur();
+
+    await elementUpdated(el);
+
+    await expect(el.getAttribute('validity')).to.be.equal('valid');
+  });
+
+  it('handles the required state with persistInput set', async () => {
+    const el = await persistInputFixture(mobileview);
+
+    el.focus();
+    el.shadowRoot.activeElement.blur();
+    await elementUpdated(el);
+
+    // validity should be `valueMissing` because the input and combo box value are still undefined
+    await expect(el.getAttribute('validity')).to.be.equal('valueMissing');
+
+    setInputValue(el, 'pp');
+    await elementUpdated(el);
+    el.shadowRoot.activeElement.blur();
+    await elementUpdated(el);
+
+    // validity should still be `valueMissing` because no menu option was selected
+    await expect(el.getAttribute('validity')).to.be.equal('valueMissing');
+  });
+
+  it('fires `auroFormElement-validated` event after validation', async () => {
+    const el = await requiredFixture(mobileview);
+
+    // error applied on blur
+    el.focus();
+    setTimeout(() => {
+      el.shadowRoot.activeElement.blur();
+    });
+    await oneEvent(el, 'auroFormElement-validated');
+  });
+
+  it('default to nocheckmark on selected option', async () => {
+    const el = await defaultFixture(mobileview);
+
+    const menu = el.querySelector('auro-menu');
+    await expect(menu.hasAttribute('nocheckmark')).to.be.true;
+  });
+
+  it('selected options have checkmark when checkmark attribute is present', async () => {
+    const el = await checkmarkFixture(mobileview);
+
+    const menu = el.querySelector('auro-menu');
+    await expect(menu.hasAttribute('nocheckmark')).to.be.false;
+  });
+
+  // it('reset method clears the value and validity state', async () => {
+  //   const el = await requiredFixture(mobileview);
+
+  //   el.focus();
+  //   el.shadowRoot.activeElement.blur();
+
+  //   await elementUpdated(el);
+  //   await expect(el.getAttribute('validity')).to.be.equal('valueMissing');
+
+  //   el.reset();
+
+  //   await elementUpdated(el);
+
+  //   await expect(el.hasAttribute('validity')).to.be.false;
+  //   await expect(el.value).to.equal(undefined);
+  // });
+}
+
+/**
+ * 
+ */
+async function persistInputFixture(mobileview) {
+  if (mobileview) {
+    await setViewport({
+      width: 500,
+      height: 800
+    });
+  } else {
+    await setViewport({
+      width: 800,
+      height: 800
+    });
+  };
+
+  return fixture(html`
+  <auro-combobox required persistInput>
+    <span slot="label">Name</span>
+    <auro-menu>
+      <auro-menuoption value="Apples" id="option-0">Apples</auro-menuoption>
+      <auro-menuoption value="Oranges" id="option-1">Oranges</auro-menuoption>
+    </auro-menu>
+  </auro-combobox>
+  `);
+};
+
+/**
+ *
+ */
+async function defaultFixture(mobileview) {
+  if (mobileview) {
+    await setViewport({
+      width: 500,
+      height: 800
+    });
+  } else {
+    await setViewport({
+      width: 800,
+      height: 800
+    });
+  }
+  return fixture(html`
+  <auro-combobox>
+    <span slot="label">Name</span>
+    <auro-menu>
+      <auro-menuoption value="Apples" id="option-0">Apples</auro-menuoption>
+      <auro-menuoption value="Oranges" id="option-1">Oranges</auro-menuoption>
+    </auro-menu>
+  </auro-combobox>
+  `);
+}
+
+/**
+ *
+ */
+async function presetValueFixture(mobileview) {
+  if (mobileview) {
+    await setViewport({
+      width: 500,
+      height: 800
+    });
+  } else {
+    await setViewport({
+      width: 800,
+      height: 800
+    });
+  }
+  return fixture(html`
+    <auro-combobox value="Apples">
+      <span slot="label">Name</span>
+      <auro-menu>
+        <auro-menuoption value="Apples" id="option-0">Apples</auro-menuoption>
+        <auro-menuoption value="Oranges" id="option-1">Oranges</auro-menuoption>
+      </auro-menu>
+    </auro-combobox>
+  `);
+}
+
+/**
+ *
+ */
+async function checkmarkFixture(mobileview) {
+  if (mobileview) {
+    await setViewport({
+      width: 500,
+      height: 800
+    });
+  } else {
+    await setViewport({
+      width: 800,
+      height: 800
+    });
+  }
+  return fixture(html`
+  <auro-combobox checkmark>
+    <span slot="label">Name</span>
+    <auro-menu>
+      <auro-menuoption value="Apples" id="option-0">Apples</auro-menuoption>
+      <auro-menuoption value="Oranges" id="option-1">Oranges</auro-menuoption>
+    </auro-menu>
+  </auro-combobox>
+  `);
+}
+
+
+/**
+ *
+ */
+async function suggestFixture(mobileview) {
+  if (mobileview) {
+    await setViewport({
+      width: 500,
+      height: 800
+    });
+  } else {
+    await setViewport({
+      width: 800,
+      height: 800
+    });
+  }
+  return fixture(html`
+  <auro-combobox>
+    <span slot="label">Name</span>
+    <auro-menu>
+      <auro-menuoption value="Apples" id="option-0">Apples</auro-menuoption>
+      <auro-menuoption value="Oranges" suggest="Apples" id="option-1">Oranges</auro-menuoption>
+    </auro-menu>
+  </auro-combobox>
+  `);
+}
+
+/**
+ *
+ */
+async function requiredFixture(mobileview) {
+  if (mobileview) {
+    await setViewport({
+      width: 500,
+      height: 800
+    });
+  } else {
+    await setViewport({
+      width: 800,
+      height: 800
+    });
+  }
+  return fixture(html`
+  <auro-combobox required>
+    <span slot="label">Name</span>
+    <auro-menu>
+      <auro-menuoption value="Apples" id="option-0">Apples</auro-menuoption>
+      <auro-menuoption value="Oranges" id="option-1">Oranges</auro-menuoption>
+    </auro-menu>
+  </auro-combobox>
+  `);
+}
+
+/**
+ *
+ */
+async function noMatchFixture(mobileview) {
+  if (mobileview) {
+    await setViewport({
+      width: 500,
+      height: 800
+    });
+  } else {
+    await setViewport({
+      width: 800,
+      height: 800
+    });
+  }
+  return fixture(html`
+  <auro-combobox>
+    <span slot="label">Name</span>
+    <auro-menu>
+      <auro-menuoption value="Apples" id="option-0">Apples</auro-menuoption>
+      <auro-menuoption value="Oranges" id="option-1">Oranges</auro-menuoption>
+      <auro-menuoption nomatch id="option-noMatch">No Matching Option</auro-menuoption>
+    </auro-menu>
+  </auro-combobox>
+  `);
+}
+
+/**
+ *
+ */
+async function persistentFixture(mobileview) {
+  if (mobileview) {
+    await setViewport({
+      width: 500,
+      height: 800
+    });
+  } else {
+    await setViewport({
+      width: 800,
+      height: 800
+    });
+  }
+  return fixture(html`
+  <auro-combobox>
+    <span slot="label">Name</span>
+    <auro-menu>
+      <auro-menuoption value="Apples" id="option-0">Apples</auro-menuoption>
+      <auro-menuoption value="Oranges" id="option-1">Oranges</auro-menuoption>
+      <auro-menuoption persistent id="option-noMatch">Persistent</auro-menuoption>
+    </auro-menu>
+  </auro-combobox>
+  `);
+}
+
+/**
+ * 
+ */
+async function filterFixture(mobileview) {
+  if (mobileview) {
+    await setViewport({
+      width: 500,
+      height: 800
+    });
+  } else {
+    await setViewport({
+      width: 800,
+      height: 800
+    });
+  }
+  return fixture(html`
+    <auro-combobox behavior="filter" setCustomValidityValueMissingFilter="filter error">
+      <span slot="label">Name</span>
+      <auro-menu>
+        <auro-menuoption value="Apples" id="option-0">Apples</auro-menuoption>
+        <auro-menuoption value="Oranges" id="option-1">Oranges</auro-menuoption>
+        <auro-menuoption persistent id="option-noMatch">Persistent</auro-menuoption>
+      </auro-menu>
+    </auro-combobox>
+  `);
+}
+
+/**
+ *
+ */
+async function customEventFixture(mobileview) {
+  if (mobileview) {
+    await setViewport({
+      width: 500,
+      height: 800
+    });
+  } else {
+    await setViewport({
+      width: 800,
+      height: 800
+    });
+  }
+  return fixture(html`
+  <auro-combobox>
+    <span slot="label">Name</span>
+    <auro-menu>
+      <auro-menuoption event="mycustomevent">Add new fruit</auro-menuoption>
+    </auro-menu>
+  </auro-combobox>
+  `);
+}
+
+/**
+ *
+ */
+async function noFilterFixture(mobileview) {
+  if (mobileview) {
+    await setViewport({
+      width: 500,
+      height: 800
+    });
+  } else {
+    await setViewport({
+      width: 800,
+      height: 800
+    });
+  }
+  return fixture(html`
+  <auro-combobox noFilter>
+    <span slot="label">Name</span>
+    <auro-menu>
+      <auro-menuoption value="Apples" id="option-0">Apples</auro-menuoption>
+      <auro-menuoption value="Oranges" id="option-1">Oranges</auro-menuoption>
+    </auro-menu>
+  </auro-combobox>
+  `);
+}
+
+/**
+ *
+ */
+function setInputValue(el, value) {
+  const auroInput = el.input;
+  const input = auroInput.shadowRoot.querySelector('input');
+  input.focus();
+  input.value = value;
+  input.dispatchEvent(new InputEvent('input'));
+  auroInput.dispatchEvent(new InputEvent('input', {
+    bubbles: true,
+    composed: true
+  }));
+  el.dispatchEvent(new KeyboardEvent('keyup', {
+    key: value.slice(value.length - 1),
+    repeat: false
+  }));
+}

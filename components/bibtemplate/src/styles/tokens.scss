@@ -1,0 +1,7 @@
+@use "@aurodesignsystem/design-tokens/dist/legacy/auro-classic/SCSSVariables" as vac;
+@use "@aurodesignsystem/design-tokens/dist/themes/alaska/SCSSVariables--alaska" as v;
+
+:host {
+  --ds-auro-dropdownbib-header-boxshadow-color: var(--ds-elevation-200, #{vac.$ds-elevation-200});
+  --ds-auro-dropdownbib-footer-container-color: var(--ds-basic-color-surface-default, #{v.$ds-basic-color-surface-default});
+}

@@ -1,0 +1,44 @@
+// Copyright (c) Alaska Air. All right reserved. Licensed under the Apache-2.0 license
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+/* stylelint-disable
+   selector-max-combinators,
+   selector-max-compound-selectors,
+   selector-max-type,
+   scss/selector-nest-combinators,
+   selector-class-pattern */
+
+// Import Auro tokens
+@use "@aurodesignsystem/design-tokens/dist/legacy/auro-classic/SCSSVariables" as vac;
+@use "@aurodesignsystem/webcorestylesheets/src/breakpoints";
+
+// container styles - defines the look of the outer custom component
+:host {
+  display: block;
+  padding-bottom: var(--ds-size-150, vac.$ds-size-150);
+}
+
+fieldset {
+  all: unset;
+}
+
+.displayFlex {
+  legend + slot {
+    display: flex;
+    white-space: nowrap;
+  }
+}
+
+legend {
+  margin-bottom: var(--ds-size-150, vac.$ds-size-150);
+}
+
+.hidden {
+  display: none;
+}
+
+[auro-helptext] {
+  margin-top: var(--ds-size-150, 0.75rem);
+}

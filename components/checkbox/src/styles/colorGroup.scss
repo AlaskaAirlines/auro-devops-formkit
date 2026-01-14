@@ -1,0 +1,26 @@
+// Copyright (c) 2024 Alaska Airlines. All right reserved. Licensed under the Apache-2.0 license
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+/* stylelint-disable selector-class-pattern */
+
+@use "@aurodesignsystem/design-tokens/dist/themes/alaska/SCSSVariables--alaska" as v;
+
+:host {
+  color: var(--ds-auro-checkbox-group-text-color);
+}
+
+:host([disabled]) {
+  --ds-auro-checkbox-group-text-color: var(--ds-basic-color-texticon-disabled, #{v.$ds-basic-color-texticon-disabled});
+}
+
+:host([onDark]),
+:host([appearance="inverse"]) {
+  --ds-auro-checkbox-group-text-color: var(--ds-basic-color-texticon-inverse, #{v.$ds-basic-color-texticon-inverse});
+}
+
+:host([onDark][disabled]),
+:host([appearance="inverse"][disabled]) {
+  --ds-auro-checkbox-group-text-color: var(--ds-basic-color-texticon-inverse-disabled, #{v.$ds-basic-color-texticon-inverse-disabled});
+}

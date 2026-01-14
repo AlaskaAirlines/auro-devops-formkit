@@ -1,0 +1,23 @@
+// Copyright (c) 2021 Alaska Airlines. All right reserved. Licensed under the Apache-2.0 license
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+/* stylelint-disable declaration-no-important, selector-max-attribute, selector-no-qualifying-type, scss/selector-nest-combinators */
+
+:host {
+  ::slotted(hr) {
+    border-top-color: var(--ds-auro-menu-divider-color);
+  }
+}
+
+[loadingplaceholder] {
+  slot[name="loadingIcon"]{
+    color: var(--ds-auro-menu-loader-color);
+  }
+
+  slot[name="loadingText"] {
+    color: var(--ds-auro-menu-loader-text-color);
+  }
+}
+

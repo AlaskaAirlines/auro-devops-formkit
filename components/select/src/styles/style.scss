@@ -1,0 +1,185 @@
+// Copyright (c) 2024 Alaska Airlines. All right reserved. Licensed under the Apache-2.0 license
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+// Import Auro tokens
+@use "@aurodesignsystem/design-tokens/dist/legacy/auro-classic/SCSSVariables" as vac;
+@use '@aurodesignsystem/design-tokens/dist/themes/alaska/SCSSVariables--alaska' as v;
+@use '@aurodesignsystem/webcorestylesheets/src/utilityClasses/displayProperties';
+@use '@aurodesignsystem/webcorestylesheets/dist/bundled/type/classes.alaska.min.css';
+
+/* stylelint-disable
+  selector-class-pattern,
+  scss/selector-nest-combinators,
+  selector-max-class,
+  selector-max-pseudo-class,
+  selector-max-combinators,
+  selector-max-compound-selectors,
+  selector-no-qualifying-type,
+  max-nesting-depth,
+  no-descending-specificity,
+  no-duplicate-selectors
+*/
+
+[auro-dropdown] {
+  --ds-auro-dropdown-trigger-border-color: var(--ds-auro-select-border-color);
+  --ds-auro-dropdown-trigger-background-color: var(--ds-auro-select-background-color);
+  --ds-auro-dropdown-trigger-container-color: var(--ds-auro-select-background-color);
+  --ds-auro-dropdown-trigger-outline-color: var(--ds-auro-select-outline-color);
+}
+
+:host {
+  display: inline-block;
+  text-align: left;
+  
+  /**
+    * By default, inline-blocks align to the text baseline, leaving a small gap below.
+    * This fixes the "extra space" below inline-block elements.
+    * see more: https://css-tricks.com/fighting-the-space-between-inline-block-elements
+    */
+  vertical-align: top;
+}
+
+:host([layout*='emphasized']),
+:host([layout*='snowflake']) {
+  [auro-dropdown] {
+    --ds-auro-select-border-color: transparent;
+  }
+
+  .mainContent {
+    text-align: center;
+  }
+}
+
+.mainContent {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.valueContainer [slot="displayValue"] {
+  display: none;
+}
+
+.accents {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+::slotted([slot="typeIcon"]) {
+  margin-right: var(--ds-size-100, vac.$ds-size-100);
+}
+
+.displayValue {
+  display: block;
+
+  &:not(.force) {
+    display: none;
+
+    &.hasContent:is(.withValue):not(.hasFocus) {
+      display: block;
+    }
+  }
+}
+
+.triggerContent {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+:host([layout*='emphasized']) {
+  .triggerContent {
+    padding: 0 var(--ds-size-100, vac.$ds-size-100) 0 var(--ds-size-300, vac.$ds-size-300);
+  }
+}
+
+:host([layout*='snowflake']) {
+  .triggerContent {
+    padding: 0 var(--ds-size-100, vac.$ds-size-100) 0 var(--ds-size-200, vac.$ds-size-200);
+  }
+}
+
+:host([layout*='snowflake']) {
+  label {
+    padding-block: var(--ds-size-25, 0.125rem);
+  }
+}
+
+:host([layout*='classic']) {
+  .triggerContent {
+    padding: 0 var(--ds-size-100, vac.$ds-size-100);
+  }
+
+  .mainContent {
+    align-items: start;
+  }
+
+  label {
+    overflow: hidden;
+    cursor: text;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .value {
+    height: auto;
+  }
+}
+
+label {
+  color: var(--ds-auro-select-label-text-color);
+}
+
+
+:host(:is([validity]:not([validity='valid']))) {
+  [auro-dropdown] {
+    --ds-auro-select-border-color: var(--ds-basic-color-status-error, #{v.$ds-basic-color-status-error});
+    --ds-auro-select-outline-color: var(--ds-basic-color-status-error, #{v.$ds-basic-color-status-error});
+    --ds-auro-dropdown-helptext-text-color: var(--ds-basic-color-texticon-default, #{v.$ds-basic-color-texticon-default});
+  }
+}
+
+:host([ondark]:is([validity]:not([validity='valid']))),
+:host([appearance='inverse']:is([validity]:not([validity='valid']))) {
+  [auro-dropdown] {
+    --ds-auro-select-border-color: var(--ds-advanced-color-state-error-inverse, #{v.$ds-advanced-color-state-error-inverse});
+    --ds-auro-select-outline-color: var(--ds-advanced-color-state-error-inverse, #{v.$ds-advanced-color-state-error-inverse});
+    --ds-auro-dropdown-helptext-text-color: var(--ds-basic-color-texticon-inverse, #{v.$ds-basic-color-texticon-inverse});
+  }
+}
+
+#slotHolder{
+  display: none;
+}
+
+:host([fluid]) {
+  width: 100%;
+}
+
+:host([disabled]) {
+  pointer-events: none;
+  user-select: none;
+}
+
+:host([disabled]:not([ondark])),
+:host([disabled]:not([appearance='inverse'])) {
+  [auro-dropdown] {
+    --ds-auro-select-border-color: var(--ds-basic-color-border-subtle, #{v.$ds-basic-color-border-subtle});
+  }
+}
+
+:host(:not([layout*="classic"])[disabled][ondark]),
+:host(:not([layout*="classic"])[disabled][appearance='inverse']) {
+  [auro-dropdown] {
+    --ds-auro-select-border-color: transparent;
+  }
+}

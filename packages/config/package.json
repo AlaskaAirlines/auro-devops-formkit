@@ -1,0 +1,28 @@
+{
+  "name": "@aurodesignsystem/config",
+  "description": "Shared configurations for auro-formkit monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./commitlint": "./src/commitlint.config.js",
+    "./eslint": "./src/eslint.config.mjs",
+    "./internal.rollup": "./src/internal.rollup.config.mjs",
+    "./rollup": "./src/rollup.config.mjs",
+    "./stylelint": "./src/stylelintrc.config.json",
+    "./wtr": "./src/web-test-runner.config.mjs",
+    "./wds": "./src/web-dev-server.config.mjs"
+  },
+  "files": [
+    "commitlint",
+    "eslint",
+    "rollup",
+    "stylelint",
+    "wtr"
+  ],
+  "scripts": {
+    "clean": "rm -rf .turbo && rm -rf node_modules"
+  }
+}

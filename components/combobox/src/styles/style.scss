@@ -1,0 +1,39 @@
+// Copyright (c) 2022 Alaska Airlines. All right reserved. Licensed under the Apache-2.0 license
+// See LICENSE in the project root for license information.
+
+/* stylelint-disable max-nesting-depth */
+
+@use '@aurodesignsystem/webcorestylesheets/src/utilityClasses/displayProperties';
+
+:host {
+  display: block;
+  text-align: left;
+
+  [auro-dropdown] {
+    --ds-auro-dropdown-trigger-background-color: transparent;
+  }
+
+  #inputInBib {
+    &::part(wrapper) {
+      box-shadow: none;
+    }
+
+    &::part(accent-left) {
+      display: none;
+    }
+  }
+}
+
+:host([layout*='classic']) {
+  [auro-input] {
+    width: 100%;
+
+    &::part(helpText) {
+      display: none;
+    }
+  }
+
+  #slotHolder{
+    display: none;
+  }
+}
