@@ -20,5 +20,4 @@ jobs:
         ./node_modules
         ./custom-elements.json
     secrets:
-      AURO_SURGE_TOKEN: $\{{ secrets.AURO_SURGE_TOKEN }}
       NPM_TOKEN: $\{{ secrets.NPM_TOKEN }}
