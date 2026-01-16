@@ -11,8 +11,8 @@ jobs:
   action:
     uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@dev
     with:
-      component: '["checkbox", "combobox", "counter", "datepicker", "dropdown", "form", "input", "menu", "radio", "select"]'
-      is-monorepo: true
+      demo-dir: './auro-formkit-demo'
+      demo-build-command: 'npm run local-demo'
       cache-dirs: |
         ./components/**/dist
         ./components/**/demo

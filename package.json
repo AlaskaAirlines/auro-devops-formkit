@@ -50,8 +50,9 @@
     "preCommit": "node ./node_modules/@aurodesignsystem/auro-library/scripts/build/pre-commit.mjs",
     "prepare": "husky",
     "deploy-demo": "npm run build && sh ./deploy-components.sh",
-    "gh-demo": "npm run build && sh ./local-demo.sh",
-    "local-demo": "npm run build && sh ./local-demo.sh --zip"
+    "local-demo": "sh ./local-demo.sh",
+    "local-demo:build": "npm run build && npm run local-demo",
+    "local-demo:zip": "npm run local-demo:build -- --zip"
   },
   "dependencies": {
     "@lit/context": "^1.1.6",
