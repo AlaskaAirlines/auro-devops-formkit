@@ -13,7 +13,7 @@
     "url": "https://github.com/AlaskaAirlines/auro-devops-formkit"
   },
   "engines": {
-    "node": "^20.x || ^22.x"
+    "node": ">=20"
   },
   "packageManager": "npm@11.6.2",
   "publishConfig": {
